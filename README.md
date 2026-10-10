@@ -8,21 +8,28 @@ This system actively monitors a Gmail support inbox, intelligently classifies em
 
 ## 🌟 Core Features
 
-1. **Active Gmail Listener (`gmail_listener.py`)**: Automatically polls a designated support inbox every 10 seconds.
+1. **Active Gmail Listener (`gmail_listener.py`)**: Automatically polls `supportpw6@gmail.com` for new tickets.
 2. **Branded HTML Replies**: The AI sends gorgeous, full-width HTML responses featuring a sleek `#000000` header and the official PW white logo.
-3. **Advanced RAG Pipeline**: Uses dense embeddings to retrieve relevant policies from the Knowledge Base to ground the AI's response.
+3. **Advanced RAG Pipeline**: Uses dense embeddings (powered by the Gemini API) to retrieve relevant policies from the Knowledge Base to ground the AI's response. Uses 0MB of local RAM!
 4. **Deterministic Escalation Rules**: If a ticket involves legal threats or high-value refund demands (Rs. 10,000+), it strictly bypasses the LLM and escalates to a human.
-5. **Real-time Admin Dashboard (`admin_app.py`)**: A Streamlit dashboard to monitor automation rates, AI token costs, classification accuracy, and review escalated tickets.
+5. **Real-time Admin Dashboard (`admin_app.py`)**: A Streamlit dashboard to monitor automation rates, AI token costs, classification accuracy, and review escalated tickets. Live at [https://pw-triage-agent-production.up.railway.app/](https://pw-triage-agent-production.up.railway.app/).
 6. **Ragas Evaluation (`ragas_eval.py`)**: Built-in Ragas integration to rigorously score the AI on Faithfulness and Answer Relevancy.
 
 ---
 
-## 🚀 Quickstart
+## 🚀 Live Demo
+
+1. **Dashboard**: View the live production dashboard here: [PW Triage Agent Dashboard](https://pw-triage-agent-production.up.railway.app/)
+2. **Test the AI**: Send an email (in English or Hinglish) to **`supportpw6@gmail.com`**. Wait 30 seconds, and the AI will auto-reply and log the ticket on the dashboard!
+
+---
+
+## 💻 Quickstart
 
 ### 1. Installation
 Clone the repository and install dependencies:
 ```bash
-git clone https://github.com/your-username/pw-triage-agent.git
+git clone https://github.com/Naveenk654/pw-triage-agent.git
 cd pw-triage-agent
 pip install -r requirements.txt
 ```
@@ -35,12 +42,8 @@ cp .env.example .env
 In `.env`:
 ```env
 GEMINI_API_KEY=your_gemini_api_key
-GROQ_API_KEY=your_groq_api_key
-TYPESAFE_API_KEY=your_typesafe_api_key
 SUPABASE_URL=your_supabase_url
 SUPABASE_KEY=your_supabase_anon_key
-GMAIL_USER=your_support_email@gmail.com
-GMAIL_APP_PASSWORD=your_16_digit_app_password
 ```
 
 ### 3. Run the System
@@ -50,26 +53,18 @@ You can run the dashboard and the email listener simultaneously using the includ
 bash start.sh
 ```
 
-Alternatively, run them in two separate terminal windows:
-```bash
-# Terminal 1: Start the Admin Dashboard
-streamlit run admin_app.py
-
-# Terminal 2: Start the Gmail AI Listener
-python -m src.gmail_listener
-```
-
 ---
 
 ## ☁️ Deployment on Railway
 
-This repository is pre-configured for 1-click deployment on Railway.app.
+This repository is heavily optimized for 1-click deployment on Railway's Free/Hobby Tier. 
 
 1. Connect your GitHub repository to Railway.
 2. Railway will automatically detect the `Procfile` and `start.sh` to boot both the Streamlit app and the Gmail background listener.
-3. Go to the **Variables** tab in Railway and securely paste all your `.env` keys.
+3. Go to the **Variables** tab in Railway and paste your keys. 
+   - **Important for Gmail OAuth**: Do NOT commit your `credentials.json` or `token.json` to GitHub! Instead, copy the raw JSON text from those files and paste them directly into Railway as environment variables named `GOOGLE_CREDENTIALS_JSON` and `GOOGLE_TOKEN_JSON`. The bot will securely recreate them on boot.
 4. (Recommended) Go to the **Volumes** tab and mount a volume at `/app/chroma_db` so the AI's vector database persists across server restarts.
-5. Generate a public domain in Railway settings to access your live Admin Dashboard from anywhere!
+5. Watch the unbuffered live logs (`python -u`)!
 
 ---
 
