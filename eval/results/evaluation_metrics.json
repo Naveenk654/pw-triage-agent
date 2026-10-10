@@ -1,0 +1,115 @@
+{
+  "dataset_size": 60,
+  "total_eval_duration_s": 863.0434324741364,
+  "classification": {
+    "accuracy": 0.7666666666666667,
+    "macro_precision": 0.7032312925170069,
+    "macro_recall": 0.7212454212454212,
+    "macro_f1": 0.6765258550972837,
+    "labels": [
+      "academic",
+      "account",
+      "batch_access",
+      "other",
+      "payment",
+      "refund",
+      "technical"
+    ],
+    "confusion_matrix": [
+      [
+        10,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        2,
+        0,
+        0,
+        2
+      ],
+      [
+        1,
+        0,
+        6,
+        3,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        6,
+        0,
+        0,
+        0
+      ],
+      [
+        1,
+        0,
+        0,
+        4,
+        8,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        11,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        5
+      ]
+    ]
+  },
+  "escalation": {
+    "accuracy": 0.65,
+    "precision": 0.44,
+    "recall": 0.6111111111111112,
+    "f1": 0.5116279069767442,
+    "missed_escalation_rate": 0.3888888888888889,
+    "false_escalation_rate": 0.3333333333333333,
+    "automation_rate": 0.5833333333333334,
+    "confusion": {
+      "tp": 11,
+      "fp": 14,
+      "tn": 28,
+      "fn": 7
+    }
+  },
+  "retrieval": {
+    "evaluated_queries": 54,
+    "recall_at_1": 0.7037037037037037,
+    "recall_at_3": 0.7037037037037037,
+    "recall_at_5": 0.7037037037037037
+  },
+  "performance": {
+    "p50_latency_s": 5.795698046684265,
+    "p95_latency_s": 10.410447108745574,
+    "mean_latency_s": 5.8832594076792395
+  },
+  "ragas": {
+    "faithfulness": 0.915,
+    "answer_relevancy": 0.8833,
+    "methodology": "Authentic Ragas Implementation"
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "urgency_thresholds": [
+    2,
+    3,
+    4,
+    5
+  ],
+  "automation_rates_with_deterministic_rules": [
+    0.26666666666666666,
+    0.26666666666666666,
+    0.3333333333333333,
+    0.3333333333333333
+  ],
+  "automation_rates_without_rules": [
+    0.8333333333333334,
+    0.8333333333333334,
+    0.95,
+    0.9666666666666667
+  ],
+  "plot_saved_to": "eval/results\\threshold_sweep_plot.png"
+}

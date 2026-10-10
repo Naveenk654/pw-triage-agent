@@ -1,0 +1,56 @@
+# Configuration for PW-Style EdTech Support Ticket Triage Agent
+
+llm:
+  primary_provider: "gemini"
+  primary_model: "gemini-3.5-flash-lite"
+  fallback_provider: "groq"
+  fallback_model: "mixtral-8x7b-32768"
+  temperature: 0.1
+  max_tokens: 512
+  timeout_seconds: 30
+  max_retries: 2
+  backoff_factor: 1.5
+  enable_cache: true  # MUST be set to false for official benchmarks
+
+jev:
+  model: "jev-1.13.0"
+  max_retries: 0
+  timeout_seconds: 5
+  budget_usd: 5.0
+
+embedding:
+  backend: "local"  # "gemini" or "local"
+  gemini_model: "gemini-embedding-001"
+  local_model: "intfloat/multilingual-e5-small"
+
+retrieval:
+  top_k_candidates: 5
+  rrf_k: 60
+  retrieval_min_score: 0.65  # Top dense cosine threshold
+  passage_relevance_min: 0.50  # Jev Call B passage relevance cutoff
+
+decision:
+  high_value_threshold: 10000.0
+  urgency_threshold: 5             # Changed from 4 to 5 (only critical = escalate)
+  min_category_confidence: 0.30    # Changed from 0.45 to 0.30 (hard floor)
+  soft_confidence_threshold: 0.55  # Below this = review, above = auto
+  angry_tone_escalates: false      # Anger -> review, not escalate
+  multi_issue_escalates: false     # Multi -> reply primary + review
+  human_request_escalates: false   # "Talk to human" -> answer first
+  sentiment_risk_auto_escalate: true
+  require_claim_verification: false
+  review_confidence_min: 0.75        # Below this -> AUTO_REPLY_WITH_REVIEW instead of AUTO_REPLY
+  approval_categories:               # Categories where grounded answers still need agent sign-off
+    - refund
+    - course_transfer
+    - subscription_cancellation
+    - payment_dispute
+    - payment_invoice
+
+pricing:
+  # USD per million tokens
+  jev_per_million: 0.042
+  gemini_input_per_million: 0.075
+  gemini_output_per_million: 0.30
+  groq_input_per_million: 0.59
+  groq_output_per_million: 0.79
