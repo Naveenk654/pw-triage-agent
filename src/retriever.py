@@ -27,7 +27,7 @@ class HybridRetriever:
         # 2. Load or Compute Dense Embeddings using ChromaDB Persistence
         import chromadb
         client = chromadb.PersistentClient(path="chroma_db")
-        self.collection = client.get_or_create_collection(name="pw_triage_kb")
+        self.collection = client.get_or_create_collection(name="pw_triage_kb_gemini")
         
         # Check which chunks are already in Chroma
         existing = self.collection.get(include=[])

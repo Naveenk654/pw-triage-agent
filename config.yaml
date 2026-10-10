@@ -19,7 +19,7 @@ jev:
   budget_usd: 5.0
 
 embedding:
-  backend: "local"  # "gemini" or "local"
+  backend: "gemini"  # "gemini" or "local"
   gemini_model: "gemini-embedding-001"
   local_model: "intfloat/multilingual-e5-small"
 
