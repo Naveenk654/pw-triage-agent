@@ -30,6 +30,7 @@ class GeminiEmbedder(Embedder):
         if not self.client:
             raise ValueError("GEMINI_API_KEY is not configured for GeminiEmbedder.")
         
+        import time
         vectors = []
         for text in texts:
             resp = self.client.models.embed_content(
@@ -37,6 +38,7 @@ class GeminiEmbedder(Embedder):
                 contents=text
             )
             vectors.append(resp.embeddings[0].values)
+            time.sleep(0.7)  # Throttle to stay under 100 RPM free tier limit
         return np.array(vectors, dtype=np.float32)
 
     def embed_query(self, query: str) -> np.ndarray:
