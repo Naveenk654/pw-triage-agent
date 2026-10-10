@@ -74,9 +74,9 @@ This repository is heavily optimized for 1-click deployment on Railway's Free/Ho
 graph TD
     A[Gmail Inbox] -->|Polling| B(Gmail Listener Module)
     B --> C{Hybrid Retriever}
-    C -->|Vector/BM25| D[ChromaDB + Gemini Embedder]
-    D --> E[Knowledge Base Docs]
-    C --> F(Gemini 1.5 Flash LLM)
+    E[Knowledge Base Docs] -->|Embedded| D[ChromaDB + Gemini Embedder]
+    D -->|Context Chunks| C
+    C -->|Augmented Prompt| F(Gemini 1.5 Flash LLM)
     F -->|Classification & Grounding| G{Decision Engine}
     G -->|Escalate| H[Human Support]
     G -->|Auto-Reply| I[HTML Email Generator]
