@@ -76,7 +76,7 @@ graph TD
     B --> C{Hybrid Retriever}
     E[Knowledge Base Docs] -->|Embedded| D[ChromaDB + Gemini Embedder]
     D -->|Context Chunks| C
-    C -->|Augmented Prompt| F(Gemini 1.5 Flash LLM)
+    C -->|Augmented Prompt| F(Gemini 3.5 Flash Lite LLM)
     F -->|Classification & Grounding| G{Decision Engine}
     G -->|Escalate| H[Human Support]
     G -->|Auto-Reply| I[HTML Email Generator]
