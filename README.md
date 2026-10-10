@@ -88,7 +88,7 @@ graph TD
 ---
 
 ## 🧠 Models and APIs Used
-1. **LLM**: `gemini-1.5-flash-lite`. **Why:** It is lightning fast, incredibly cheap, and handles the nuances of mixed "Hinglish" text (Hindi + English) vastly better than smaller open-source models.
+1. **LLM**: `gemini-1.5-flash-lite` (Primary) and `jev-1.13.0` (Secondary/Routing). **Why:** Both are lightning fast, incredibly cheap, and handle the nuances of mixed "Hinglish" text (Hindi + English) vastly better than smaller open-source models.
 2. **Embeddings**: `gemini-embedding-001`. **Why:** Initially, we used a local PyTorch `multilingual-e5-small` model. However, it consumed 600MB of RAM, causing constant Out-Of-Memory (OOM) crashes on Railway's 500MB Free Tier. Switching to the Gemini API dropped our RAM usage to ~150MB and provided superior multilingual semantic search.
 3. **Database**: `ChromaDB` (Local vector store, persisted to Railway Volume) and `Supabase` (Cloud Postgres for logging ticket history and analytics).
 4. **Email API**: `Gmail API` via Google Cloud OAuth2.
@@ -96,6 +96,7 @@ graph TD
 ---
 
 ## 💰 Cost Per Run
+- **Jev-1.13.0**: $0.042 per 1M tokens.
 - **Gemini Flash Lite**: $0.075 per 1M input tokens, $0.30 per 1M output tokens.
 - **Gemini Embeddings**: Free Tier (Google AI Studio).
 - **Average Ticket Processed**: Uses ~1,500 input tokens (system prompt + 5 retrieved KB chunks) and ~250 output tokens (the email body).
