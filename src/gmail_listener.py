@@ -269,6 +269,10 @@ def get_html_template(body_html: str) -> str:
 
 def send_reply(service, thread_id: str, message_id: str, references: str, to: str, subject: str, reply_text: str):
     """Sends an automated reply via Gmail API."""
+    if not reply_text:
+        logger.error(f"Cannot send reply to {to}: reply_text is empty or None.")
+        return
+
     if MOCK_MODE:
         logger.info(f"[MOCK] Sent Auto-Reply to {to} | Subject: Re: {subject}\n{reply_text}")
         return
@@ -301,6 +305,10 @@ def send_reply(service, thread_id: str, message_id: str, references: str, to: st
 
 def create_draft(service, thread_id: str, message_id: str, references: str, to: str, subject: str, draft_text: str):
     """Creates a draft email for a human agent to review."""
+    if not draft_text:
+        logger.error(f"Cannot create draft for {to}: draft_text is empty or None.")
+        return
+
     if MOCK_MODE:
         logger.info(f"[MOCK] Created Draft to {to} | Subject: Re: {subject}\n{draft_text}")
         return
@@ -397,17 +405,33 @@ def run_listener():
                 }
                 _log_to_analytics(email, decision, class_dict, tokens_dict)
                 
-                if action == "AUTO_REPLY" or action == "AUTO_REPLY_WITH_REVIEW":
-                    # Footer is now built into the HTML template!
-                    send_reply(service, email['threadId'], email['message_id'], email['references'], email['sender'], email['subject'], decision['draft_reply'])
+                if action in ("AUTO_REPLY", "AUTO_REPLY_WITH_REVIEW"):
+                    reply_text = decision.get('draft_reply')
+                    if reply_text:
+                        send_reply(service, email['threadId'], email['message_id'], email['references'], email['sender'], email['subject'], reply_text)
+                    else:
+                        logger.warning(f"Action was {action} but draft_reply is missing. Creating escalation draft for human review.")
+                        packet = decision.get("handoff_packet") or f"**Escalation Ticket**\n\nTicket from {email['sender']} flagged for manual human review (Auto-reply draft unavailable)."
+                        create_draft(service, email['threadId'], email['message_id'], email['references'], email['sender'], email['subject'], packet)
                 elif action == "CLARIFY":
-                    send_reply(service, email['threadId'], email['message_id'], email['references'], email['sender'], email['subject'], decision['clarification_question'])
+                    clarif_text = decision.get('clarification_question')
+                    if clarif_text:
+                        send_reply(service, email['threadId'], email['message_id'], email['references'], email['sender'], email['subject'], clarif_text)
+                    else:
+                        logger.warning("CLARIFY action was triggered but clarification_question is missing. Escalating to human queue.")
+                        create_draft(service, email['threadId'], email['message_id'], email['references'], email['sender'], email['subject'], "Student ticket requires clarification. Please review manually.")
                 elif action == "APPROVAL_REQUIRED":
-                    create_draft(service, email['threadId'], email['message_id'], email['references'], email['sender'], email['subject'], decision['draft_reply'])
+                    draft_text = decision.get('draft_reply')
+                    if draft_text:
+                        create_draft(service, email['threadId'], email['message_id'], email['references'], email['sender'], email['subject'], draft_text)
+                    else:
+                        logger.warning("APPROVAL_REQUIRED action but draft_reply is missing. Creating escalation draft.")
+                        packet = decision.get("handoff_packet") or f"**Approval Required**\n\nTicket from {email['sender']} requires human action."
+                        create_draft(service, email['threadId'], email['message_id'], email['references'], email['sender'], email['subject'], packet)
                 elif action == "ESCALATE":
                     logger.warning(f"Escalated. Creating Handoff Packet draft for human triage.")
-                    if decision.get("handoff_packet"):
-                        create_draft(service, email['threadId'], email['message_id'], email['references'], email['sender'], email['subject'], decision['handoff_packet'])
+                    packet = decision.get("handoff_packet") or f"**Escalation Handoff Packet**\n\nSubject: {email.get('subject')}\nFrom: {email.get('sender')}\nPlease triage manually."
+                    create_draft(service, email['threadId'], email['message_id'], email['references'], email['sender'], email['subject'], packet)
                 
                 # GAP 4 FIX: Record success in DB
                 _mark_as_processed_in_db(email['id'])

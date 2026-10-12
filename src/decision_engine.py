@@ -218,20 +218,56 @@ class DecisionEngine:
             )
             
         if needs_approval:
+            if not draft_response or not draft_response.reply_text:
+                packet = f"**Escalation Handoff Packet (Approval Category - No Draft)**\n\n"
+                packet += f"**Student Intent:** {preprocess_data.get('search_query', 'N/A')}\n\n"
+                packet += f"**Category:** {classification.category.upper()}\n"
+                packet += f"**Urgency:** {classification.urgency}/5\n"
+                packet += f"**Action Required:** Category requires approval, but no draft response was generated from KB.\n"
+                for r in reasons:
+                    packet += f"- {r}\n"
+                return DecisionResult(
+                    action=TriageAction.ESCALATE,
+                    reasons=reasons + ["Approval required category but draft generation was unavailable; escalated for manual handling."],
+                    draft_reply=None,
+                    citations=[],
+                    confidence=classification.confidence,
+                    urgency=classification.urgency,
+                    handoff_packet=packet
+                )
+
             return DecisionResult(
                 action=TriageAction.APPROVAL_REQUIRED,
                 reasons=reasons,
-                draft_reply=draft_response.reply_text if draft_response else None,
+                draft_reply=draft_response.reply_text,
                 citations=draft_response.citations if draft_response else [],
                 confidence=classification.confidence,
                 urgency=classification.urgency,
             )
             
         if needs_review:
+            if not draft_response or not draft_response.reply_text:
+                packet = f"**Escalation Handoff Packet (Unanswerable / Review Flagged)**\n\n"
+                packet += f"**Student Intent:** {preprocess_data.get('search_query', 'N/A')}\n\n"
+                packet += f"**Category:** {classification.category.upper()}\n"
+                packet += f"**Urgency:** {classification.urgency}/5\n"
+                packet += f"**Action Required:** Auto-reply review triggered but draft response was unavailable from Knowledge Base.\n"
+                for r in reasons:
+                    packet += f"- {r}\n"
+                return DecisionResult(
+                    action=TriageAction.ESCALATE,
+                    reasons=reasons + ["Draft response unavailable for auto-reply; escalated for manual triage."],
+                    draft_reply=None,
+                    citations=[],
+                    confidence=classification.confidence,
+                    urgency=classification.urgency,
+                    handoff_packet=packet
+                )
+
             return DecisionResult(
                 action=TriageAction.AUTO_REPLY_WITH_REVIEW,
                 reasons=reasons,
-                draft_reply=draft_response.reply_text if draft_response else None,
+                draft_reply=draft_response.reply_text,
                 citations=draft_response.citations if draft_response else [],
                 confidence=classification.confidence,
                 urgency=classification.urgency,
