@@ -9,7 +9,7 @@ PW Triage Agent is an AI-assisted email triage system designed to help support t
 
 ## Live Demo: Round 1 Assignment
 
-**Deployed website:** https://pw-triage-agent-production.up.railway.app/  
+**Deployed website:** https://pw-triage-agent-production.up.railway.app/(currently not working)
 **Support inbox:** supportpw6@gmail.com
 
 PW Triage Agent is an email-based support automation system. The Gmail integration is implemented: incoming support emails are processed by the agent, which retrieves relevant knowledge, decides whether the query can be answered safely, and follows the configured response or human-review path.
